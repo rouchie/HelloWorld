@@ -17,7 +17,7 @@ public:
 
 public:
     void Start(const std::string& ip, int port, OnClose onclose = nullptr);
-    void Stop();
+    void Stop() const;
     void ReStart();
 
 private:
@@ -30,7 +30,7 @@ protected:
     virtual void OnDisconnected() = 0;
     
 protected:
-    virtual void Recved(const char* data, size_t size) = 0;
+    virtual void OnRecved(const char* data, size_t size) = 0;
 
 protected:
     void Send(const char* data, size_t size);
@@ -42,7 +42,7 @@ protected:
 
     OnClose m_close;
 
-    int64_t m_allRecved = 0;
-    int64_t m_allSended = 0;
+    size_t m_allRecved = 0;
+    size_t m_allSended = 0;
 };
 

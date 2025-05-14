@@ -1,4 +1,6 @@
 ﻿#include "rqtcpclient.h"
+
+#include <utility>
 #include "rqevent.h"
 
 #include "utils/UtilsSpdlog.h"
@@ -16,7 +18,7 @@ RQTcpClient::RQTcpClient()
 
 RQTcpClient::~RQTcpClient()
 {
-	SPDLOG_INFO("DEL Session AllRecved[{}] AllSended[{}]", m_allRecved, m_allSended);
+	SPDLOG_INFO("DEL Session[{:#X}] AllRecved[{}] AllSended[{}]", Mid(), m_allRecved, m_allSended);
 	Stop();
 }
 
@@ -25,13 +27,13 @@ void RQTcpClient::Start(const std::string& ip, int port, OnClose onclose)
 	m_ip = ip;
 	m_port = port;
 
-	m_close = onclose;
+	m_close = std::move(onclose);
 
 	RQObject::Start();
 	RQEvent::Inst()->PipeAddClient(Mid(), ip, port);
 }
 
-void RQTcpClient::Stop()
+void RQTcpClient::Stop() const
 {
 	RQEvent::Inst()->PipeDelClient(Mid(), UUID());
 }
@@ -48,7 +50,7 @@ int RQTcpClient::Input(RQMsg::PTR msg)
 
 	m_allRecved += binary.size();
 
-	Recved(binary.data(), binary.size());
+	OnRecved(binary.data(), binary.size());
 
 	return 0;
 }
@@ -64,8 +66,6 @@ int RQTcpClient::TcpConnected(RQMsg::PTR msg)
 int RQTcpClient::TcpDisconnected(RQMsg::PTR msg)
 {
 	OnDisconnected();
-
-	if (m_close) m_close();
 
 	return 0;
 }

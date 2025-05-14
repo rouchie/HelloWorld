@@ -20,6 +20,9 @@ public:
     void SetBody(const std::string& body);
     void SetJsonBody(const std::string& body);
 
+public:
+    std::string ToString();
+
 protected:
     std::string m_method;
     std::string m_uri;

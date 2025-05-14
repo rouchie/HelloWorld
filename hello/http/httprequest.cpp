@@ -1,5 +1,7 @@
 ﻿#include "httprequest.h"
 
+#include "utils/UtilsSpdlog.h"
+
 RQHttpRequest::RQHttpRequest()
 	: m_method("GET"), m_uri("/"), m_version("HTTP/1.1")
 {
@@ -42,3 +44,16 @@ void RQHttpRequest::SetJsonBody(const std::string& body)
 	m_body = body;
 }
 
+std::string RQHttpRequest::ToString()
+{
+	std::string out = fmt::format("{} {} {}\r\n", m_method, m_uri, m_version);
+
+	for (auto& it : m_header) {
+		out += fmt::format("{}: {}\r\n", it.first, it.second);
+	}
+
+	out += "\r\n";
+	out += m_body;
+
+	return out;
+}
