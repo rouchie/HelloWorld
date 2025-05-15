@@ -18,7 +18,7 @@ RQTcpClient::RQTcpClient()
 
 RQTcpClient::~RQTcpClient()
 {
-	SPDLOG_INFO("DEL Session[{:#X}] AllRecved[{}] AllSended[{}]", Mid(), m_allRecved, m_allSended);
+	SPDLOG_INFO("DEL Session[{:#X}:{:#X}] AllRecved[{}] AllSended[{}]", Mid(), UUID(), m_allRecved, m_allSended);
 	Stop();
 }
 
@@ -44,9 +44,9 @@ void RQTcpClient::ReStart()
 	Start(m_ip, m_port);
 }
 
-int RQTcpClient::Input(RQMsg::PTR msg)
+int RQTcpClient::Input(const RQMsg::Ptr& msg)
 {
-	auto binary = msg->Binary();
+	auto binary = msg->Bin();
 
 	m_allRecved += binary.size();
 
@@ -55,7 +55,7 @@ int RQTcpClient::Input(RQMsg::PTR msg)
 	return 0;
 }
 
-int RQTcpClient::TcpConnected(RQMsg::PTR msg)
+int RQTcpClient::TcpConnected(const RQMsg::Ptr& msg)
 {
 	UUID(msg->Pam());
 
@@ -63,9 +63,9 @@ int RQTcpClient::TcpConnected(RQMsg::PTR msg)
 	return 0;
 }
 
-int RQTcpClient::TcpDisconnected(RQMsg::PTR msg)
+int RQTcpClient::TcpDisconnected(const RQMsg::Ptr& msg)
 {
-	OnDisconnected();
+	OnDisconnected(msg->Pam());
 
 	return 0;
 }

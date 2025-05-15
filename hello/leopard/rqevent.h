@@ -14,13 +14,35 @@
 #include "event2/buffer.h"
 #include "event2/bufferevent.h"
 
+class RQEventSession : public std::enable_shared_from_this<RQEventSession>
+{
+public:
+    using Ptr = std::shared_ptr<RQEventSession>;
+
+public:
+    static Ptr MakeInst();
+
+public:
+    RQEventSession();
+
+public:
+    int64_t uuid = 0;
+
+public:
+    bufferevent* bf_event = nullptr;
+    mid_t recver = 0;
+
+public:
+    RQObject::PTR object;
+};
+
 class RQEvent : virtual public std::enable_shared_from_this<RQEvent>
 {
 public:
-    using PTR = std::shared_ptr<RQEvent>;
+    using Ptr = std::shared_ptr<RQEvent>;
 
 public:
-    static PTR Inst();
+    static Ptr Inst();
 
 public:
     static void PipeEvent(evutil_socket_t fd, short, void* arg);
@@ -46,37 +68,37 @@ public:
     void PipeDelClient(mid_t mid, int64_t uuid);
 
 public:
-    void WritePipe(RQMsg::PTR msg);
-    RQMsg::PTR ReadPipe(cid_t& cid);
+    void WritePipe(RQMsg::Ptr msg);
+    RQMsg::Ptr ReadPipe(cid_t& cid);
 
 public:
-    void TcpListen(RQMsg::PTR msg);
-    void TcpSend(RQMsg::PTR msg);
+    void TcpListen(RQMsg::Ptr msg);
+    void TcpSend(RQMsg::Ptr msg);
 
 public:
-    void TcpConnect(RQMsg::PTR msg);
-    void TcpDisconnect(RQMsg::PTR msg);
+    void TcpConnect(RQMsg::Ptr msg);
+    void TcpDisconnect(RQMsg::Ptr msg);
 
 public:
-    void BindMsg(RQMsg::PTR msg);
-    RQMsg::PTR FindMsg(void* arg);
+    void BindMsg(RQMsg::Ptr msg);
+    RQMsg::Ptr FindMsg(void* arg);
 
 public:
-    void BindSession(RQBaseSession::PTR session);
+    void BindSession(const RQEventSession::Ptr& session);
     void UnBindSession(void* arg);
-    RQBaseSession::PTR FindSession(void* arg);
+    RQEventSession::Ptr FindSession(void* arg);
 
 public:
-    struct event_base* Base();
+    struct event_base* Base() const;
 
 private:
-    evutil_socket_t m_sockets[2];
+    evutil_socket_t m_sockets[2]{};
     struct event_base* m_base = nullptr;
     struct event* m_pipe = nullptr;
 
 private:
     std::mutex m_mtx;
-    std::list<RQMsg::PTR> m_pipeMsg;
-    std::unordered_map<void*, RQMsg::PTR> m_bindMsg;
-    std::unordered_map<void*, RQBaseSession::PTR> m_bindSession;
+    std::list<RQMsg::Ptr> m_pipeMsg;
+    std::unordered_map<void*, RQMsg::Ptr> m_bindMsg;
+    std::unordered_map<void*, RQEventSession::Ptr> m_bindSession;
 };

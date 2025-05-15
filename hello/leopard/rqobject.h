@@ -24,22 +24,22 @@ public:
     mid_t Mid() const;
 
 public:
-    int Callback(RQMsg::PTR msg);
+    int Callback(RQMsg::Ptr msg);
 
 protected:
-	int Connect(cid_t command, std::function<int(RQMsg::PTR)> done);
+	int Connect(cid_t command, std::function<int(RQMsg::Ptr)> done);
 	int Disconnect(cid_t command);
 
 public:
-    std::string CreateTimer(time_t seconds, long nanoseconds, RQMsg::PTR msg, uint32_t times);
-    std::string CreateTimer(uint32_t microseconds, RQMsg::PTR msg, uint32_t times);
+    std::string CreateTimer(time_t seconds, long nanoseconds, RQMsg::Ptr msg, uint32_t times);
+    std::string CreateTimer(uint32_t microseconds, RQMsg::Ptr msg, uint32_t times);
     void CancelTimer(const std::string& timer);
 
 protected:
     mid_t m_mid = 0;
 
 private:
-	std::unordered_map<cid_t, std::function<int(RQMsg::PTR req)>> m_mapCallback;
+	std::unordered_map<cid_t, std::function<int(RQMsg::Ptr req)>> m_mapCallback;
 
     bool m_bMutex = false;
     std::mutex m_mtx;

@@ -13,7 +13,7 @@ public:
 
 public:
     RQTcpClient();
-    ~RQTcpClient();
+    ~RQTcpClient() override;
 
 public:
     void Start(const std::string& ip, int port, OnClose onclose = nullptr);
@@ -21,13 +21,13 @@ public:
     void ReStart();
 
 private:
-    int Input(RQMsg::PTR msg);
-    int TcpConnected(RQMsg::PTR msg);
-    int TcpDisconnected(RQMsg::PTR msg);
+    int Input(const RQMsg::Ptr& msg);
+    int TcpConnected(const RQMsg::Ptr& msg);
+    int TcpDisconnected(const RQMsg::Ptr& msg);
 
 protected:
     virtual void OnConnected(int64_t uuid) = 0;
-    virtual void OnDisconnected() = 0;
+    virtual void OnDisconnected(int64_t code) = 0;
     
 protected:
     virtual void OnRecved(const char* data, size_t size) = 0;

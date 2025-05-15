@@ -16,7 +16,7 @@ void RQObject::Start()
 {
     std::weak_ptr<RQObject> weak = this->shared_from_this();
 
-    RQCoreManager::Inst()->AddModule(m_mid, [weak](RQMsg::PTR req) {
+    RQCoreManager::Inst()->AddModule(m_mid, [weak](RQMsg::Ptr req) {
         auto ptr = weak.lock();
         if (!ptr) {
             // TODO: resp 回复该模块已释放
@@ -34,9 +34,9 @@ mid_t RQObject::Mid() const
     return m_mid;
 }
 
-int RQObject::Callback(RQMsg::PTR msg)
+int RQObject::Callback(RQMsg::Ptr msg)
 {
-    auto command = msg->Command();
+    auto command = msg->Cmd();
 
     auto it = m_mapCallback.find(command);
     if (it == m_mapCallback.end()) {
@@ -47,7 +47,7 @@ int RQObject::Callback(RQMsg::PTR msg)
 	return it->second(msg);
 }
 
-int RQObject::Connect(cid_t command, std::function<int(RQMsg::PTR)> done)
+int RQObject::Connect(cid_t command, std::function<int(RQMsg::Ptr)> done)
 {
     m_mapCallback[command] = done;
     return 0;
@@ -59,7 +59,7 @@ int RQObject::Disconnect(cid_t command)
     return 0;
 }
 
-std::string RQObject::CreateTimer(time_t seconds, long nanoseconds, RQMsg::PTR msg, uint32_t times)
+std::string RQObject::CreateTimer(time_t seconds, long nanoseconds, RQMsg::Ptr msg, uint32_t times)
 {
     std::weak_ptr<RQObject> weak = shared_from_this();
 
@@ -92,7 +92,7 @@ std::string RQObject::CreateTimer(time_t seconds, long nanoseconds, RQMsg::PTR m
     return std::string();
 }
 
-std::string RQObject::CreateTimer(uint32_t microseconds, RQMsg::PTR msg, uint32_t times)
+std::string RQObject::CreateTimer(uint32_t microseconds, RQMsg::Ptr msg, uint32_t times)
 {
     return CreateTimer(microseconds / 1000, microseconds % 1000 * 1000, msg, times);
 }

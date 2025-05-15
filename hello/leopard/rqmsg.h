@@ -8,77 +8,66 @@
 class RQMsg : public std::enable_shared_from_this<RQMsg>
 {
 public:
-    using PTR = std::shared_ptr<RQMsg>;
+    using Ptr = std::shared_ptr<RQMsg>;
 
 public:
-	static PTR Builder(cid_t command)
+	static Ptr Builder(cid_t command)
 	{
-		auto msg = std::make_shared<RQMsg>(0, command);
+		auto msg = std::make_shared<RQMsg>(command);
 		return msg;
 	}
 
-	static PTR Builder(mid_t sender, cid_t command)
+	static Ptr Builder(mid_t sender, cid_t command)
 	{
-		auto msg = std::make_shared<RQMsg>(sender, 0, command, 0);
+		auto msg = std::make_shared<RQMsg>(sender,command, 0);
 		return msg;
 	}
 
-	static PTR Builder(mid_t sender, cid_t command, int64_t number)
+	static Ptr Builder(mid_t sender, cid_t command, int64_t number)
 	{
-		auto msg = std::make_shared<RQMsg>(sender, 0, command, number);
+		auto msg = std::make_shared<RQMsg>(sender, command, number);
 		return msg;
 	}
 
-	static PTR Builder(mid_t sender, cid_t command, int64_t number, const std::string& message)
+	static Ptr Builder(mid_t sender, cid_t command, int64_t number, const std::string& message)
 	{
-		auto msg = std::make_shared<RQMsg>(sender, 0, command, number, message);
+		auto msg = std::make_shared<RQMsg>(sender, command, number, message);
 		return msg;
 	}
 
 public:
-    RQMsg(mid_t recver, cid_t command);
-    RQMsg(mid_t recver, cid_t command, int64_t number);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, int64_t number);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, int64_t number, int64_t count);
-    RQMsg(mid_t recver, cid_t command, const std::string& message);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, const std::string& message);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, int64_t number, const std::string& message);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, int64_t number, const std::string& message, const std::string& binary);
-    RQMsg(mid_t sender, mid_t recver, cid_t command, int64_t number, int64_t count, const std::string& message, const std::string& binary);
+    explicit RQMsg(const RQMsg::Ptr& msg);
+
+    explicit RQMsg(cid_t command);
+    RQMsg(cid_t command, int64_t number);
+    RQMsg(mid_t sender, cid_t command, int64_t number);
+    RQMsg(mid_t sender, cid_t command, int64_t number, int64_t count);
+    RQMsg(cid_t command, const std::string& message);
+    RQMsg(mid_t sender, cid_t command, const std::string& message);
+    RQMsg(mid_t sender, cid_t command, int64_t number, const std::string& message);
+    RQMsg(mid_t sender, cid_t command, int64_t number, const std::string& message, const std::string& binary);
+    RQMsg(mid_t sender, cid_t command, int64_t number, int64_t count, const std::string& message, const std::string& binary);
 
 public:
-	PTR Clone();
+	virtual Ptr Clone() const;
 
 public:
-	PTR Snd(mid_t sender);
-	PTR Rcv(mid_t recver);
-	PTR Cmd(cid_t command);
-	PTR Num(int64_t number);
-	PTR Pam(int64_t param);
-	PTR Msg(const std::string& message);
-	PTR Bin(const std::string& binary);
+	Ptr Snd(mid_t sender);
+	Ptr Cmd(cid_t command);
+	Ptr Num(int64_t number);
+	Ptr Pam(int64_t param);
+	Ptr Msg(const std::string& message);
+	Ptr Bin(const std::string& binary);
 
 public:
 	mid_t Snd() const { return m_sender; }
-	mid_t Rcv() const { return m_recver; }
-	mid_t Cmd() const { return m_command; }
+	cid_t Cmd() const { return m_command; }
 	int64_t Num() const { return m_number; }
 	int64_t Pam() const { return m_param; }
-	int64_t Cnt() const { return m_param; }
-	const std::string& Msg() { return m_message; }
-	const std::string& Bin() { return m_binary; }
-
-public:
-	mid_t Sender() const { return m_sender; }
-	mid_t Recver() const { return m_recver; }
-	cid_t Command() const { return m_command; }
-	int64_t Number() const { return m_number; }
-	int64_t& Count() { return m_param; }
-	const std::string& Message() const { return m_message; }
-	const std::string& Binary() const { return m_binary; }
+	const std::string& Msg() const { return m_message; }
+	const std::string& Bin() const { return m_binary; }
 
 private:
-	mid_t m_recver = 0;
 	mid_t m_sender = 0;
 	cid_t m_command = 0;
 	int64_t m_number = 0;
@@ -89,30 +78,27 @@ private:
 
 template <>
 struct fmt::formatter<RQMsg> {
-    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+    static constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(const RQMsg& p, format_context& ctx) const {
+    static auto format(const RQMsg& p, format_context& ctx) {
 		std::string s;
-		if (p.Sender() != 0) {
-			s += fmt::format("Sender[{}] ", p.Sender());
-		}
-		if (p.Recver() != 0) {
-			s += fmt::format("Recver[{}] ", p.Recver());
+		if (p.Snd() != 0) {
+			s += fmt::format("Sender[{}] ", p.Snd());
 		}
 
-		s += fmt::format("Command[{}] ", p.Command());
+		s += fmt::format("Command[{}] ", p.Cmd());
 
-		if (p.Number() != 0) {
-			s += fmt::format("Number[{}] ", p.Number());
+		if (p.Num() != 0) {
+			s += fmt::format("Number[{}] ", p.Num());
 		}
-		if (const_cast<RQMsg&>(p).Count()) {
-			s += fmt::format("Count[{}] ", const_cast<RQMsg&>(p).Count());
+		if (const_cast<RQMsg&>(p).Pam()) {
+			s += fmt::format("Count[{}] ", const_cast<RQMsg&>(p).Pam());
 		}
-		if (p.Message().size()) {
-			s += fmt::format("Message[{}] ", p.Message());
+		if (!p.Msg().empty()) {
+			s += fmt::format("Message[{}] ", p.Msg());
 		}
-		if (p.Binary().size()) {
-			s += fmt::format("Binary[{}] ", p.Binary().size());
+		if (!p.Bin().empty()) {
+			s += fmt::format("Binary[{}] ", p.Bin().size());
 		}
         return fmt::format_to(ctx.out(), "{}", s);
     }
@@ -120,9 +106,9 @@ struct fmt::formatter<RQMsg> {
 
 template <>
 struct fmt::formatter<std::shared_ptr<RQMsg>> {
-	constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+	static constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
-	auto format(const std::shared_ptr<RQMsg>& ptr, format_context& ctx) const {
+	static auto format(const std::shared_ptr<RQMsg>& ptr, format_context& ctx) {
 		if (ptr) {
 			return fmt::format_to(ctx.out(), "{}", *ptr);
 		}

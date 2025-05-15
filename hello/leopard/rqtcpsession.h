@@ -13,12 +13,11 @@ public:
     using PTR = std::shared_ptr<RQTcpSession>;
 
 public:
-    RQTcpSession(mid_t parent, int64_t uuid);
-    RQTcpSession(int64_t uuid);
-    ~RQTcpSession();
+    explicit RQTcpSession(int64_t uuid);
+    ~RQTcpSession() override;
 
 private:
-    int Input(RQMsg::PTR msg);
+    int Input(RQMsg::Ptr msg);
 
 protected:
     void Started() override;

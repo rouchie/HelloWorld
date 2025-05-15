@@ -7,8 +7,8 @@ public:
 
 public:
     RQBaseSession(mid_t mid, int64_t uuid) : m_id(mid), m_uuid(uuid) {}
-    RQBaseSession(int64_t uuid) : m_uuid(uuid) {}
-    RQBaseSession() {}
+    explicit RQBaseSession(const int64_t uuid) : m_uuid(uuid) {}
+    RQBaseSession() = default;
 
 public:
     int64_t UUID() const { return m_uuid; }

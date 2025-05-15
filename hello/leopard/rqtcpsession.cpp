@@ -6,12 +6,6 @@
 
 #include "workflow/WFTaskFactory.h"
 
-RQTcpSession::RQTcpSession(mid_t parent, int64_t uuid)
-	: RQObject(IPC_MODULE_ID_TCP_SESSION), RQBaseSession(uuid)
-{
-	Connect(IPC_COMMAND_ID_TCP_READ, BIND1(&RQTcpSession::Input));
-}
-
 RQTcpSession::RQTcpSession(int64_t uuid)
 	: RQObject(IPC_MODULE_ID_TCP_SESSION), RQBaseSession(uuid)
 {
@@ -23,9 +17,9 @@ RQTcpSession::~RQTcpSession()
 	SPDLOG_INFO("DEL Session AllRecved: {}", m_allRecved);
 }
 
-int RQTcpSession::Input(RQMsg::PTR msg)
+int RQTcpSession::Input(RQMsg::Ptr msg)
 {
-	auto binary = msg->Binary();
+	auto binary = msg->Bin();
 	Recved(binary.data(), binary.size());
 	return 0;
 }

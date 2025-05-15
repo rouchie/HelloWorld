@@ -3,7 +3,7 @@
 
 #include "workflow/WFTaskFactory.h"
 
-void ObjectInfo::PushMsg(RQMsg::PTR msg)
+void ObjectInfo::PushMsg(RQMsg::Ptr msg)
 {
 	if (m_signal == false) {
 		auto* task = WFTaskFactory::create_go_task("comm", m_communication, msg);
@@ -28,7 +28,7 @@ void ObjectInfo::PushMsg(RQMsg::PTR msg)
 	auto self = this->shared_from_this();
 	auto* task = WFTaskFactory::create_go_task("comm", [this, self]() {
 		while (true) {
-			RQMsg::PTR msg;
+			RQMsg::Ptr msg;
 			{
 				WriteLock lock(m_rwlockmsg);
 				if (m_listMsg.empty()) {
@@ -112,7 +112,7 @@ bool RQCoreManager::DelModule(mid_t mid)
     return true;
 }
 
-bool RQCoreManager::Send(mid_t recver, RQMsg::PTR msg)
+bool RQCoreManager::Send(mid_t recver, RQMsg::Ptr msg)
 {
     mid_t mid = recver & 0X0000FFFF;
 

@@ -16,7 +16,7 @@ int RQTcpServer(int port)
     int result;
 
     mid_t mid = IPC_MODULE_ID_TCP_SERVER;
-    RQCoreManager::Inst()->AddModule(mid, [&result, &sem](RQMsg::PTR msg) -> int {
+    RQCoreManager::Inst()->AddModule(mid, [&result, &sem](RQMsg::Ptr msg) -> int {
         result = msg->Number();
         sem.Post();
         return 0;
