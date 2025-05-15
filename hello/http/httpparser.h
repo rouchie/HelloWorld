@@ -7,7 +7,7 @@
 class HttpParser
 {
 public:
-    HttpParser(bool is_resp = false);
+    explicit HttpParser(bool is_resp = false);
 
 public:
     /**
@@ -29,4 +29,5 @@ public:
 
 private:
     std::shared_ptr<http_parser_t> m_ptrParser;
+    bool m_is_resp = false;
 };

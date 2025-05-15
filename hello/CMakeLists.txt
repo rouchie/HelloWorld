@@ -27,7 +27,7 @@ add_library(leopard STATIC ${BASE_SOURCE})
 target_link_libraries(leopard PRIVATE ${LIBS} workflow)
 
 #################################################################################
-file(GLOB DEMO_SOURCE "demo/*.cpp")
+file(GLOB DEMO_SOURCE "demo/*.cpp" "demo/hello/*.cpp")
 add_executable(demo ${DEMO_SOURCE})
 target_link_libraries(demo PRIVATE leopard ${LIBS} OpenSSL::SSL OpenSSL::Crypto workflow)
 

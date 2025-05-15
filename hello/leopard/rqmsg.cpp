@@ -27,8 +27,8 @@ RQMsg::RQMsg(mid_t sender, cid_t command, int64_t number)
 {
 }
 
-RQMsg::RQMsg(mid_t sender, cid_t command, int64_t number, int64_t count)
-	: m_sender(sender), m_command(command), m_number(number), m_param(count)
+RQMsg::RQMsg(mid_t sender, cid_t command, int64_t number, int64_t param)
+	: m_sender(sender), m_command(command), m_number(number), m_param(param)
 {
 }
 

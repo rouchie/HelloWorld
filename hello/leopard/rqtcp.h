@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "rqobject.h"
+#include "rqcoremanager.h"
 
 #include "utils/UtilsSemaphore.h"
 
@@ -17,7 +18,7 @@ int RQTcpServer(int port)
 
     mid_t mid = IPC_MODULE_ID_TCP_SERVER;
     RQCoreManager::Inst()->AddModule(mid, [&result, &sem](RQMsg::Ptr msg) -> int {
-        result = msg->Number();
+        result = msg->Num();
         sem.Post();
         return 0;
     });

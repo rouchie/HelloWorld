@@ -4,6 +4,7 @@
 #include "utils/UrlPath.h"
 
 HttpParser::HttpParser(bool is_resp)
+	: m_is_resp(is_resp)
 {
 }
 
@@ -19,7 +20,7 @@ int HttpParser::InputData(const char* data, size_t* size)
 	if (m_ptrParser == nullptr) {
 		m_ptrParser = std::make_shared<http_parser_t>();
 		parser = m_ptrParser.get();
-		http_parser_init(0, parser);
+		http_parser_init(m_is_resp, parser);
 	}
 	else {
 		parser = m_ptrParser.get();

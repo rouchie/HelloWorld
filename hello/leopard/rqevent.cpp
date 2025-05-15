@@ -29,10 +29,6 @@ RQEventSession::Ptr RQEventSession::MakeInst()
     return session;
 }
 
-RQEventSession::RQEventSession()
-{
-}
-
 RQEvent::Ptr RQEvent::Inst()
 {
     static RQEvent::Ptr inst = std::make_shared<RQEvent>();
@@ -191,9 +187,8 @@ bool RQEvent::Start()
 void RQEvent::PipeAddListen(mid_t mid, int port, std::function<RQTcpSession::PTR(int64_t)> session)
 {
     cid_t cid = IPC_COMMAND_ID_TCP_LISTEN;
-    auto msg = std::make_shared<RQTcpMsg>(mid, mid, cid, port);
+    auto msg = std::make_shared<RQTcpMsg>(mid, cid, port);
     msg->BindSession(std::move(session));
-
     WritePipe(msg);
 }
 

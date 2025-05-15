@@ -23,7 +23,7 @@ public:
     static Ptr MakeInst();
 
 public:
-    RQEventSession();
+    RQEventSession() = default;
 
 public:
     int64_t uuid = 0;
