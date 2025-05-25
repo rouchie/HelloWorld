@@ -114,41 +114,14 @@ void RQEvent::Read(struct bufferevent* bev, void* ctx)
 
 void RQEvent::Event(struct bufferevent* bev, short what, void* ctx)
 {
-    RQEventSession::Ptr session = RQEvent::Inst()->FindSession(ctx);
+    const RQEventSession::Ptr session = RQEvent::Inst()->FindSession(ctx);
 
 	if (what & BEV_EVENT_ERROR || what & BEV_EVENT_EOF) {
         REQ(session->recver, RQMsg::Builder(IPC_COMMAND_ID_TCP_DISCONNECT)->Pam(what));
         RQEvent::Inst()->UnBindSession(ctx);
     }
     else if (what & BEV_EVENT_CONNECTED) {
-		bufferevent_enable(bev, EV_READ | EV_WRITE);
-        REQ(session->recver, RQMsg::Builder(IPC_COMMAND_ID_TCP_CONNECT)->Pam(session->uuid));
-    }
-}
-
-void RQEvent::Cli_Read(struct bufferevent* bev, void* ctx)
-{
-	struct evbuffer* pInput = bufferevent_get_input(bev);
-	size_t s = evbuffer_get_length(pInput);
-
-    std::string binary;
-    binary.resize(s);
-	evbuffer_remove(pInput, (void*) binary.data(), s);
-
-    RQEventSession::Ptr session = RQEvent::Inst()->FindSession(ctx);
-    REQ(session->recver, RQMsg::Builder(IPC_COMMAND_ID_TCP_READ)->Bin(binary));
-}
-
-void RQEvent::Cli_Event(struct bufferevent* bev, short what, void* ctx)
-{
-    RQEventSession::Ptr session = RQEvent::Inst()->FindSession(ctx);
-
-	if (what & BEV_EVENT_ERROR || what & BEV_EVENT_EOF) {
-        REQ(session->recver, RQMsg::Builder(IPC_COMMAND_ID_TCP_DISCONNECT)->Pam(what));
-        RQEvent::Inst()->UnBindSession(ctx);
-    }
-    else if (what & BEV_EVENT_CONNECTED) {
-		bufferevent_enable(bev, EV_READ | EV_WRITE);
+		bufferevent_enable(bev, EV_READ | EV_WRITE | EV_CLOSED);
         REQ(session->recver, RQMsg::Builder(IPC_COMMAND_ID_TCP_CONNECT)->Pam(session->uuid));
     }
 }

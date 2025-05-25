@@ -3,6 +3,8 @@ project(hello)
 
 set(CMAKE_CXX_STANDARD 11)
 
+add_definitions(-DOS_WINDOWS)
+
 include_directories(
     ${PROJECT_SOURCE_DIR}
 )
@@ -21,15 +23,31 @@ set(LIBS
     libevent::core libevent::extra
 )
 
+# rtsp ##########################################################################
+include_directories(
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/include
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtp/include
+)
+set(RTSP_SOURCES
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/sdp.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/sdp-options.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/sdp-a-rtpmap.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/sdp-a-fmtp.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/rtsp-header-transport.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/rtsp-header-range.c
+        ${PROJECT_SOURCE_DIR}/ireader/media-server/librtsp/source/client/rtp-over-rtsp.c
+)
+add_library(rtsp ${RTSP_SOURCES})
+
 #################################################################################
-file(GLOB BASE_SOURCE "leopard/*.cpp" "http/*.cpp")
+file(GLOB BASE_SOURCE "leopard/*.cpp" "http/*.cpp" "http/*.c")
 add_library(leopard STATIC ${BASE_SOURCE})
 target_link_libraries(leopard PRIVATE ${LIBS} workflow)
 
 #################################################################################
-file(GLOB DEMO_SOURCE "demo/*.cpp" "demo/hello/*.cpp")
+file(GLOB DEMO_SOURCE "demo/*.cpp" "demo/hello/*.cpp" "demo/rtsp/*.cpp" "demo/rtsp/*.c")
 add_executable(demo ${DEMO_SOURCE})
-target_link_libraries(demo PRIVATE leopard ${LIBS} OpenSSL::SSL OpenSSL::Crypto workflow)
+target_link_libraries(demo PRIVATE leopard ${LIBS} OpenSSL::SSL OpenSSL::Crypto workflow rtsp)
 
 #################################################################################
 # 获取当前目录下所有 .cpp 文件（替换为你的目录路径）

@@ -1,0 +1,3 @@
+[submodule "hello/ireader/media-server"]
+	path = hello/ireader/media-server
+	url = https://github.com/ireader/media-server.git

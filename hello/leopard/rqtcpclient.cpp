@@ -46,7 +46,7 @@ void RQTcpClient::ReStart()
 
 int RQTcpClient::Input(const RQMsg::Ptr& msg)
 {
-	auto binary = msg->Bin();
+	const auto binary = msg->Bin();
 
 	m_allRecved += binary.size();
 
@@ -58,8 +58,8 @@ int RQTcpClient::Input(const RQMsg::Ptr& msg)
 int RQTcpClient::TcpConnected(const RQMsg::Ptr& msg)
 {
 	UUID(msg->Pam());
-
 	OnConnected(msg->Pam());
+
 	return 0;
 }
 

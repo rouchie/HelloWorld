@@ -118,18 +118,18 @@ bool RQCoreManager::Send(mid_t recver, RQMsg::Ptr msg)
 
 	ReadLock lock(m_rwlock);
 
-	auto it = m_mapModule2Func.find(mid);
-	if (it == m_mapModule2Func.end() || it->second.size() == 0) {
+	const auto it = m_mapModule2Func.find(mid);
+	if (it == m_mapModule2Func.end() || it->second.empty()) {
 		// TODO: 返回不存在模块错误码
 		return false;
 	}
 
-	auto ii = it->second.find(recver);
+	const auto ii = it->second.find(recver);
 	if (ii != it->second.end()) {
 		ii->second->PushMsg(msg);
 	}
 	else {
-		for (auto& tt : it->second) {
+		for (const auto& tt : it->second) {
 			tt.second->PushMsg(msg);
 		}
 	}

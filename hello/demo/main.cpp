@@ -2,19 +2,17 @@
 #include "utils/UrlPath.h"
 
 #include "leopard/rqcoremanager.h"
-#include "leopard/rqtcpclient.h"
-#include "http/httprequest.h"
+#include "leopard/rqtcp.h"
 
 #include "hello/hellosession.h"
-#include "leopard/rqtcp.h"
+#include "rtsp/rtspclient.h"
+
+#include "http/httpparser.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "mswsock.lib")
 #endif
-
-// const std::string uri = "rtsp://gwm-000-cn-0448.bcloud365.net:9012/rec/bfe1011fc564c98c/Mnx8YmVjMDIxYzIwZTI5ZWYyNWI2YTM5ZGJjYjgxMWQyZmJ8fGJmZTEwMTFmYzU2NGM5OGN8fDlmMGYwMzkzNjAzNzcxMWZiNGMxYWJmM2E0NWM07NDVjMDhjMzA2MTlhMmEzMTM5NTNhOThjMTAwNTJiOTU3YWR8fHJ0c3B8fDE3NDcyMDQ4NTUyMTZ8fDE4NDQ2NzQ0MDcxNTYyMDY3OTY4fHxHV00%3D.89cd191948f7d622e33351ad2ab03228.dat";
-const std::string uri = "rtsp://10.10.22.116:9012/rec/bfe1011fc564c98c/Mnx8YmVjMDIxYzIwZTI5ZWYyNWI2YTM5ZGJjYjgxMWQyZmJ8fGJmZTEwMTFmYzU2NGM5OGN8fGI3YjI4MWViMWVjZjg5MzBiOTQ5OTgyZGI4YTM41ZTE2YTJjOGE0MGJiZmE2ZjJhMWM3NTUwMDgxNWFlMDE0NGN8fHJ0c3B8fDE3NDcyMDk1MjE1OTd8fDE4NDQ2NzQ0MDcxNTYyMDY3OTY4fHxHV00%3D.33a4b46eb6b6f843c53f5412320f1eb9.dat";
 
 int main(int ac, char **av)
 {
@@ -23,16 +21,18 @@ int main(int ac, char **av)
     RQCoreManager::Inst()->Start(IPC_SERVER_ID_HELLO);
 
     {
-        RQTcpClient::PTR rtsp = std::make_shared<RtspClient>();
-        rtsp->Start("127.0.0.1", 9012, [rtsp]() mutable {
+        const std::string uri = "rtsp://127.0.0.1:40554/myapp/test.mp4";
+
+        auto rtsp = std::make_shared<RtspClient>(uri, "admin", "admin");
+        rtsp->Start(uri, [rtsp](int64_t code) mutable {
             rtsp.reset();
         });
     }
 
-    int nRet = RQTcpServer<HelloSession>(50000);
-    if (nRet < 0) {
+    int nRet = 0;
 
-    }
+    nRet = RQTcpServer<HelloSession>(50000);
+    if (nRet < 0) {}
 
     CSemaphore semm;
     semm.Wait();

@@ -50,9 +50,6 @@ public:
     static void Read(struct bufferevent *bev, void *ctx);
     static void Event(struct bufferevent *bev, short what, void *ctx);
 
-    static void Cli_Read(struct bufferevent *bev, void *ctx);
-    static void Cli_Event(struct bufferevent *bev, short what, void *ctx);
-
 public:
     RQEvent();
 

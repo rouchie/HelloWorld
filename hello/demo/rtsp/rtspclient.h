@@ -1,51 +1,33 @@
 #pragma once
 
+#include "rtspprotocol.h"
+
 #include "leopard/rqtcpclient.h"
 
-class RtspProtocol
-{
-public:
-    int Input(const char *data, size_t size)
-    {
-        const uint8_t* start = (uint8_t*) (data);
-        const uint8_t* end = (uint8_t*) (data + size);
-
-        do {
-            if (!m_needMore && (*start == '$' || 0 != m_rtp->state)) {
-                start = rtp_over_rtsp(m_rtp.get(), start, end);
-            }
-            else {
-                // 上次还没解析完成
-                size_t size = end - start;
-                int nRet = m_httpParser.InputData((char*)start, &size);
-                if (nRet > 0) {
-                    OnProtocol();
-                    m_needMore = false;
-                }
-                else if (nRet == 0) {
-                    m_needMore = true;
-                }
-                else {
-                    // 解析出错了
-                }
-                start += size;
-            }
-        } while (start < end && !m_needMore);
-    }
-};
+#define RTSP_BAD_URL       40001
+#define RTSP_PARSER_FAILED 40002
 
 class RtspClient final : public RQTcpClient, public RtspProtocol
 {
 public:
-    RtspClient() = default;
+    using Ptr = std::shared_ptr<RtspClient>;
 
+public:
+    RtspClient(const std::string& url, const std::string& name, const std::string& pwd);
     ~RtspClient() override = default;
+
+public:
+    void Start(const std::string& url, OnClose close);
+
+protected:
+    int OnSend(const char *data, const size_t size) override;
+
+    void OnOptions() override;
+    void OnDescribe(const std::string& sdp) override;
 
 protected:
     void OnConnected(int64_t uuid) override;
-
     void OnDisconnected(int64_t code) override;
-
     void OnRecved(const char *data, size_t size) override;
 
 private:

@@ -5,6 +5,9 @@
 class RQHttpResponse : public std::enable_shared_from_this<RQHttpResponse>
 {
 public:
+    using Ptr = std::shared_ptr<RQHttpResponse>;
+
+public:
     RQHttpResponse();
     RQHttpResponse(const std::string& version, int code, const std::string& phrase);
 
@@ -14,12 +17,24 @@ public:
     void SetStatusPhrase(const std::string& phrase);
 
 public:
+    std::string GetVersion() const;
+    int GetStatusCode() const;
+    std::string GetStatusPhrase() const;
+
+public:
     void AddHeaderPair(const std::string& name, const std::string& value);
     void AddHeaderPair(const std::string& name, int64_t value);
 
 public:
+    std::string HeaderPair(const std::string& name);
+    bool FindHeaderPair(const std::string& name, std::string& value);
+
+public:
     void SetBody(const std::string& body);
     void SetJsonBody(const std::string& body);
+
+public:
+    std::string GetBody() const;
 
 public:
     std::string ToString();

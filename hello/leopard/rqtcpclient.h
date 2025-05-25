@@ -6,10 +6,10 @@
 class RQTcpClient : public RQObject, public RQBaseSession
 {
 public:
-    using PTR = std::shared_ptr<RQTcpClient>;
+    using Ptr = std::shared_ptr<RQTcpClient>;
 
 public:
-    using OnClose = std::function<void()>;
+    using OnClose = std::function<void(int64_t)>;
 
 public:
     RQTcpClient();

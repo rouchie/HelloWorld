@@ -46,6 +46,7 @@ void RQHttpSession::OnHttpRequestError(int nError)
 
 void RQHttpSession::OnHttpRequest()
 {
+	/*
 	SPDLOG_INFO("Req method[{}] url[{}]", m_req.m_method, m_req.m_uri);
 
 	auto it = m_funcs.find(m_req.m_method);
@@ -63,18 +64,22 @@ void RQHttpSession::OnHttpRequest()
 	respon.AddHeaderPair("Date", GetFormattedTime());
 	respon.SetJsonBody(js.dump(4));
 	Send(respon.ToString());
+	*/
 }
 
 void RQHttpSession::OnHead()
 {
+	/*
 	RQHttpResponse respon(m_req.m_version, 200, "OK");
 	respon.AddHeaderPair("Date", GetFormattedTime());
 	respon.AddHeaderPair("Server", "www.rouchie.com");
 	Send(respon.ToString());
+	*/
 }
 
 void RQHttpSession::OnGet()
 {
+	/*
 	RQHttpResponse respon(m_req.m_version, 200, "OK");
 	respon.AddHeaderPair("Date", GetFormattedTime());
 	respon.AddHeaderPair("Server", "www.rouchie.com");
@@ -85,6 +90,7 @@ void RQHttpSession::OnGet()
 	respon.SetJsonBody(js.dump(4));
 
 	Send(respon.ToString());
+	*/
 }
 
 void RQHttpSession::OnPut()
@@ -104,8 +110,10 @@ void RQHttpSession::OnDelete()
 
 void RQHttpSession::Response(int code, const std::string& message, nlohmann::json body)
 {
+	/*
 	RQHttpResponse respon(m_req.m_version, code, message);
 	respon.SetJsonBody(body.dump());
 	Send(respon.ToString());
+	*/
 }
 
